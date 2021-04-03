@@ -15,6 +15,8 @@ const filmSchema = mongoose.Schema({
   awaiting: { type: String, default: "true" },
   evaluate: Number,
   inventory: Number,
+  UID: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
+  favorites: [mongoose.Schema.Types.ObjectId],
   sold: { type: Number, default: 0 },
   guaranteed: Number,
   createdAt: { type: Number, default: new Date().getTime() },
