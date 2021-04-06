@@ -8,6 +8,7 @@ import connection from "./database/connection.js";
 import productRouter from './routes/product.router.js'
 import postRouter from './routes/post.router.js'
 import userRouter from './routes/user.router.js'
+import cartRouter from './routes/cart.router.js'
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(morgan("tiny"));
 app.use('/api', productRouter)
 app.use('/api', postRouter)
 app.use('/api', userRouter)
+app.use('/api', cartRouter)
 
 app.get("/", (req, res) => {
   // res.cookie('cookiename', 'cookievalue', { httpOnly: true });

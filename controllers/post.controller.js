@@ -1,5 +1,4 @@
 import Post from '../models/post.model.js'
-
 export const createPost = async (req, res) => {
   try {
     const data = req.body

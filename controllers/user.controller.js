@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import User from "../models/user.model.js";
+import Product from '../models/product.model.js';
 import cloudinary from '../utils/cloudinary/index.js';
 
 export const registerUser = async (req, res) => {
@@ -128,21 +129,78 @@ export const deleteUser = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const id = req.user;
-    const user = await User.findById(id);
+    // const combine = await User.aggregate([
+    //   {
+    //     $lookup: {
+    //       from: "products",
+    //       localField: "cart.productID",
+    //       foreignField: "_id",
+    //       as: "cart",
+    //     },
+
+    //   },
+
+    // ])
+    // const combine = await User.aggregate([
+    //   {
+    //     $lookup:
+    //     {
+    //       from: "products",
+    //       let: { cart: "$cart", num: "$cart.quantity" },
+    //       pipeline: [
+    //         {
+    //           $match:
+    //           {
+    //             $expr:
+    //             {
+    //               $eq: ["$inventory", 10]
+    //               // $eq: ["$_id", "$$cart.productID"]
+
+    //             }
+    //           }
+
+    //         },
+    //       ],
+    //       as: "cartList"
+    //     }
+    //   }
+    // ])
+    const user = await User.findById(id)
     res.status(200).json({ displayName: user.displayName, photoURL: user.photoURL, _id: user._id });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-// export const logoutUser = async (req, res) => {
+export const addProductToCart = async (req, res) => {
+  try {
+    const data = req.body
+    const id = req.user
+    const user = await User.findById(id)
+    if (!user) res.status(404).json({ message: 'Không tìm thấy user' })
+    const newUser = await User.findByIdAndUpdate(id, { cart: [...user.cart, { productID: data.productID, quantity: data.quantity }] }, { new: true })
+    res.status(200).json(newUser.cart)
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
-//   try {
-//     if (req.cookies['auth-token']) {
-//       res.clearCookie('auth-token')
-//       res.status(200).json(true)
-//     } else { res.status(400).json({ message: "Không tồn tại tài khoản!" }) }
+export const removeProductFromCart = async (req, res) => {
+  try {
+    const productID = req.params.id;
+    const id = req.user
+    const user = await User.findById(id)
+    if (!user) res.status(404).json({ message: 'Không tìm thấy user' })
+    const newUser = await User.findByIdAndUpdate(id, { cart: user.cart.filter(item => item.productID.toString() !== productID) }, { new: true })
+    res.status(200).json(newUser.cart)
 
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+export const updateProductFromCart = async (req, res) => {
+  try {
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
