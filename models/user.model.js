@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true, minlength: 5 },
   photoURL: { type: String, default: "https://png.pngitem.com/pimgs/s/130-1300400_user-hd-png-download.png" },
   role: { type: Number, default: 0 },
-  cart: [{ productID: { type: mongoose.Schema.Types.ObjectId, ref: "products" }, quantity: Number }],
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "products" }]
 });
 

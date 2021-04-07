@@ -10,11 +10,11 @@ export const registerUser = async (req, res) => {
     let { displayName, password, passwordCheck, email, photoURL, role } = req.body;
 
     if (!password || !email || !passwordCheck)
-      return res.status(400).json({ message: "email and password must fill in" });
-    if (password.length < 5) return res.status(400).json({ message: "password length can't least than 5" });
-    if (password !== passwordCheck) return res.status(400).json({ message: "password different password confirm" });
+      return res.status(400).json({ message: "Phải điền đủ email và password" });
+    if (password.length < 5) return res.status(400).json({ message: "Độ dài password không thể ít hơn 5" });
+    if (password !== passwordCheck) return res.status(400).json({ message: "Password xác nhận không khớp" });
     const existingUser = await User.findOne({ email: email });
-    if (existingUser) return res.status(400).json({ message: "this email already exists" });
+    if (existingUser) return res.status(400).json({ message: "Email đã đăng ký trước đó" });
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
     if (!displayName) displayName = email;
@@ -74,7 +74,7 @@ export const loginGoogleUser = async (req, res) => {
 
     res
       .status(200)
-      .json({ token, user: { displayName: newUser.displayName, photoURL: newUser.photoURL, _id: newUser._id, role: newUser.role, } });
+      .json({ token, user: { displayName: newUser.displayName, photoURL: newUser.photoURL, _id: newUser._id, role: newUser.role, favorites: newUser.favorites, } });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -85,9 +85,9 @@ export const loginUser = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: "must fill in email and password to login" });
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "user not exist may be email or password incorrect" });
+    if (!user) return res.status(400).json({ message: "Tài khoản không tồn tại hoặc sai email, password!" });
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: " email or password incorrect" });
+    if (!isMatch) return res.status(400).json({ message: " Email or password incorrect" });
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
     res.status(200).json({
       token, user:
@@ -96,6 +96,7 @@ export const loginUser = async (req, res) => {
         photoURL: user.photoURL,
         _id: user._id,
         role: user.role,
+        favorites: user.favorites,
       }
 
     });
@@ -166,40 +167,49 @@ export const getUser = async (req, res) => {
     //   }
     // ])
     const user = await User.findById(id)
-    res.status(200).json({ displayName: user.displayName, photoURL: user.photoURL, _id: user._id });
+    res.status(200).json({ displayName: user.displayName, photoURL: user.photoURL, _id: user._id, favorites: user.favorites, role: user.role });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-export const addProductToCart = async (req, res) => {
+export const updateFavorites = async (req, res) => {
   try {
-    const data = req.body
+    const productID = req.params.id
     const id = req.user
     const user = await User.findById(id)
-    if (!user) res.status(404).json({ message: 'Không tìm thấy user' })
-    const newUser = await User.findByIdAndUpdate(id, { cart: [...user.cart, { productID: data.productID, quantity: data.quantity }] }, { new: true })
-    res.status(200).json(newUser.cart)
+    const product = await Product.findById(productID)
+    const existFavorite = user.favorites.find(item => item.toString() === productID)
+    let newUser
+    let newProduct
+    if (existFavorite) {
+      newProduct = await Product.findByIdAndUpdate(productID, { favorites: product.favorites.filter(u => u.toString() !== id) }, { new: true })
+      newUser = await User.findByIdAndUpdate(id, { favorites: user.favorites.filter(fav => fav.toString() !== productID) }, { new: true })
+    } else {
+      newUser = await User.findByIdAndUpdate(id, { favorites: [...user.favorites, productID] }, { new: true });
+      newProduct = await Product.findByIdAndUpdate(productID, { favorites: [...product.favorites, id] }, { new: true })
+    }
+    res.status(200).json({ favorites: newUser.favorites, product: newProduct });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 }
-
-export const removeProductFromCart = async (req, res) => {
+export const getFavorites = async (req, res) => {
   try {
-    const productID = req.params.id;
     const id = req.user
-    const user = await User.findById(id)
-    if (!user) res.status(404).json({ message: 'Không tìm thấy user' })
-    const newUser = await User.findByIdAndUpdate(id, { cart: user.cart.filter(item => item.productID.toString() !== productID) }, { new: true })
-    res.status(200).json(newUser.cart)
+    const combine = await User.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          localField: "favorites",
+          foreignField: "_id",
+          as: "favorites",
+        },
 
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
-export const updateProductFromCart = async (req, res) => {
-  try {
+      },
 
+    ])
+    const favorites = combine.find(user => user._id.toString() === id).favorites
+    res.status(200).json(favorites);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -6,7 +6,8 @@ import {
   deleteUser,
   getUser,
   loginGoogleUser,
-  addProductToCart, removeProductFromCart
+  updateFavorites,
+  getFavorites
 } from "../controllers/user.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 
@@ -18,7 +19,8 @@ route.post("/users/isValidToken", isValidToken);
 route.delete("/users/:id", deleteUser);
 route.post("/users/loginGoogle", loginGoogleUser);
 route.get("/users", auth, getUser);
-route.post("/users/addProduct", auth, addProductToCart);
-route.delete("/users/removeProduct/:id", auth, removeProductFromCart);
+route.patch("/users/updateFavorites/:id", auth, updateFavorites);
+route.get("/users/getFavorites", auth, getFavorites);
+
 
 export default route;
