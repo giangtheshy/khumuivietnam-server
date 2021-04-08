@@ -58,7 +58,15 @@ export const getProduct = async (req, res) => {
 }
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find()
+    const page = req.query.page * 1;
+    let products
+    if (!page) {
+
+      products = await Product.find().sort({ sold: -1 })
+    } else {
+      products = await Product.find().sort({ sold: -1 }).limit(page * 10)
+
+    }
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
