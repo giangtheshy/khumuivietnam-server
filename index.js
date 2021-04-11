@@ -23,7 +23,8 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: process.env.NODE_ENV === "production" ? "https://khumuivietnam.com" : "http://localhost:3000",
+    origin: process.env.NODE_ENV === "production" ? "http://localhost:3000" : "http://localhost:3000",
+    // origin: process.env.NODE_ENV === "production" ? "https://khumuivietnam.com" : "http://localhost:3000",
   })
 );
 app.use(morgan("tiny"));
