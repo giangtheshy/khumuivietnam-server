@@ -12,7 +12,7 @@ const { OAuth2 } = google.auth;
 
 const client = new OAuth2(process.env.MAILING_SERVICE_CLIENT_ID);
 
-const { CLIENT_URL } = process.env;
+const CLIENT_URL = process.env.NODE_ENV === "production" ? "https://khumuivietnam.com" : process.env.CLIENT_URL;
 
 export const registerUser = async (req, res) => {
   try {
