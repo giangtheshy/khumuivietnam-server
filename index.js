@@ -16,15 +16,16 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
+app.set("trust proxy", 1);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.json());
 app.use(
   cors({
+    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token", "Authorization"],
     credentials: true,
-    origin: process.env.NODE_ENV === "production" ? "http://localhost:3000" : "http://localhost:3000",
-    // origin: process.env.NODE_ENV === "production" ? "https://khumuivietnam.com" : "http://localhost:3000",
+    origin: process.env.NODE_ENV === "production" ? "https://khumuivietnam.com" : "http://localhost:3000",
   })
 );
 app.use(morgan("tiny"));
