@@ -126,7 +126,7 @@ const userController = {
         httpOnly: true,
         path: "/api/user/refresh_token",
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: "lax",
+        sameSite: "none",
         secure: process.env.NODE_ENV === "production" ? true : false,
       });
 
@@ -250,7 +250,7 @@ const userController = {
           httpOnly: true,
           path: "/api/user/refresh_token",
           maxAge: 7 * 24 * 60 * 60 * 1000,
-          sameSite: "lax",
+          sameSite: "none",
           secure: process.env.NODE_ENV === "production" ? true : false,
         });
         res.status(200).json({ message: "Login success!" });
@@ -265,7 +265,7 @@ const userController = {
           httpOnly: true,
           path: "/api/user/refresh_token",
           maxAge: 7 * 24 * 60 * 60 * 1000,
-          sameSite: "lax",
+          sameSite: "none",
           secure: process.env.NODE_ENV === "production" ? true : false,
         });
         res.status(200).json({ message: "Login success!" });
@@ -300,7 +300,7 @@ const userController = {
           httpOnly: true,
           path: "/api/user/refresh_token",
           maxAge: 7 * 24 * 60 * 60 * 1000,
-          sameSite: "lax",
+          sameSite: "none",
           secure: process.env.NODE_ENV === "production" ? true : false,
         });
         res.status(200).json({ message: "Login success!" });
@@ -313,7 +313,7 @@ const userController = {
           httpOnly: true,
           path: "/api/user/refresh_token",
           maxAge: 7 * 24 * 60 * 60 * 1000,
-          sameSite: "lax",
+          sameSite: "none",
           secure: process.env.NODE_ENV === "production" ? true : false,
         });
         res.status(200).json({ message: "Login success!" });
