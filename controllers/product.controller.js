@@ -6,8 +6,8 @@ import cloudinary from '../utils/cloudinary/index.js';
 
 export const createProduct = async (req, res) => {
   try {
-    const id = req.user
-    const role = req.role
+    const id = req.user.id
+    const role = req.user.role
     const data = req.body
     if (role * 1 >= 1) {
 
@@ -76,8 +76,8 @@ export const updateProduct = async (req, res) => {
   try {
     const data = req.body
     const productID = req.params.id
-    const role = req.role
-    const user = req.user
+    const role = req.user.role
+    const user = req.user.id
     const product = await Product.findById(productID)
     if (!product) res.status(404).json({ message: 'Product not found' })
     if (role * 1 > 1 || user === product.UID.toString() && role * 1 === 1) {
@@ -123,8 +123,8 @@ export const updateProduct = async (req, res) => {
 export const removeProduct = async (req, res) => {
   try {
     const productID = req.params.id
-    const role = req.role
-    const user = req.user
+    const role = req.user.role
+    const user = req.user.id
     const product = await Product.findById(productID)
     if (!product) res.status(404).json({ message: 'Product not found' })
     if (role * 1 > 1 || user === product.UID.toString() && role * 1 === 1) {

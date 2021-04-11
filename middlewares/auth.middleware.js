@@ -1,18 +1,19 @@
-
 import jwt from "jsonwebtoken";
 
 const auth = (req, res, next) => {
   try {
-    const token = req.header("x-auth-token");
+    const token = req.header("Authorization");
+    if (!token) return res.status(400).json({ message: "Invalid Authentication." });
 
-    if (!token) return res.status(401).json({ message: "not authentication found" });
-    const verify = jwt.verify(token, process.env.JWT_SECRET);
-    if (!verify) return res.status(401).json({ message: "token is invalid" });
-    req.user = verify.id;
-    req.role = verify.role;
-    next();
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
+      if (error) return res.status(400).json({ message: "Invalid Authentication." });
+
+      req.user = user;
+      next();
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ msg: error.message });
   }
 };
+
 export default auth;

@@ -1,7 +1,7 @@
 import Cart from '../models/cart.model.js'
 export const addToCart = async (req, res) => {
   try {
-    const id = req.user
+    const id = req.user.id
     const data = req.body
     const cart = new Cart({ title: data.title, quantity: data.quantity, UID: id, productID: data._id, inventory: data.inventory, price: data.price, images: data.images })
     await cart.save()
@@ -21,7 +21,7 @@ export const removeFromCart = async (req, res) => {
 }
 export const getCarts = async (req, res) => {
   try {
-    const id = req.user
+    const id = req.user.id
 
     const cart = await Cart.find({ UID: id })
     res.status(200).json(cart)
