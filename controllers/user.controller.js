@@ -200,8 +200,22 @@ const userController = {
   },
   updateUser: async (req, res) => {
     try {
-      const { name, avatar } = req.body;
-      await User.findOneAndUpdate({ _id: req.user.id }, { name, avatar });
+      const { name } = req.body;
+      await User.findOneAndUpdate({ _id: req.user.id }, { name });
+
+      res.status(200).json({ message: "Updated!" });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+  updateUserAvatar: async (req, res) => {
+    try {
+      const { avatar } = req.body;
+      if (!avatar) return res.status(400).json({ message: "Avatar can not be empty" });
+      const uploadResponse = await cloudinary.uploader.upload(avatar, {
+        upload_preset: "khumuivietnam",
+      });
+      await User.findOneAndUpdate({ _id: req.user.id }, { avatar: uploadResponse.secure_url });
 
       res.status(200).json({ message: "Updated!" });
     } catch (error) {
