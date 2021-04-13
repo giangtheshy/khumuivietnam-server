@@ -217,7 +217,7 @@ const userController = {
       });
       await User.findOneAndUpdate({ _id: req.user.id }, { avatar: uploadResponse.secure_url });
 
-      res.status(200).json({ message: "Updated!" });
+      res.status(200).json({ avatar: uploadResponse.secure_url });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
