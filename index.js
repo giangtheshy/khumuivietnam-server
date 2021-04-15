@@ -23,8 +23,10 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.json());
 app.use(
   cors({
-    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token", "Authorization"],
+    // allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token", "Authorization"],
     credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    // origin: "*",
     origin: process.env.NODE_ENV === "production" ? "https://khumuivietnam.com" : "http://localhost:3000",
   })
 );

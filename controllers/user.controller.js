@@ -259,7 +259,7 @@ const userController = {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Password is incorrect." });
 
-        const refresh_token = createRefreshToken({ id: user._id });
+        const refresh_token = createRefreshToken({ id: user._id, role: user.role });
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
           path: "/api/user/refresh_token",
@@ -273,7 +273,7 @@ const userController = {
 
         await newUser.save();
 
-        const refresh_token = createRefreshToken({ id: newUser._id });
+        const refresh_token = createRefreshToken({ id: newUser._id, role: newUser.role });
 
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
@@ -309,7 +309,7 @@ const userController = {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Password is incorrect." });
 
-        const refresh_token = createRefreshToken({ id: user._id });
+        const refresh_token = createRefreshToken({ id: user._id, role: user.role });
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
           path: "/api/user/refresh_token",
@@ -322,7 +322,7 @@ const userController = {
         const newUser = new User({ name, email, password: passwordHash, avatar: picture.data.url });
         await newUser.save();
 
-        const refresh_token = createRefreshToken({ id: newUser._id });
+        const refresh_token = createRefreshToken({ id: newUser._id, role: newUser.role });
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
           path: "/api/user/refresh_token",
