@@ -9,6 +9,8 @@ import productRouter from "./routes/product.router.js";
 import postRouter from "./routes/post.router.js";
 import userRouter from "./routes/user.router.js";
 import cartRouter from "./routes/cart.router.js";
+import paymentRouter from "./routes/payment.router.js";
+import billRouter from "./routes/bill.router.js";
 
 dotenv.config();
 
@@ -23,10 +25,8 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.json());
 app.use(
   cors({
-    // allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token", "Authorization"],
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    // origin: "*",
     origin: process.env.NODE_ENV === "production" ? "https://khumuivietnam.com" : "http://localhost:3000",
   })
 );
@@ -35,6 +35,8 @@ app.use("/api", productRouter);
 app.use("/api", postRouter);
 app.use("/api/user", userRouter);
 app.use("/api", cartRouter);
+app.use("/api/payment", paymentRouter);
+app.use("/api/bill", billRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to backend web!");
