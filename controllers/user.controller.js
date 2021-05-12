@@ -258,7 +258,7 @@ const userController = {
       if (user) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Password is incorrect." });
-
+        User.findByIdAndUpdate(user._id, { name: name, avatar: picture });
         const refresh_token = createRefreshToken({ id: user._id, role: user.role });
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
@@ -308,7 +308,7 @@ const userController = {
       if (user) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Password is incorrect." });
-
+        User.findByIdAndUpdate(user._id, { name: name, avatar: picture.data.url });
         const refresh_token = createRefreshToken({ id: user._id, role: user.role });
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
@@ -392,7 +392,8 @@ const userController = {
 };
 
 const validateEmail = (email) => {
-  const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re =
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
 };
 const createActivationToken = (payload) => jwt.sign(payload, process.env.ACTIVATION_TOKEN_SECRET, { expiresIn: "5m" });
