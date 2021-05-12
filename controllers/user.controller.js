@@ -258,7 +258,7 @@ const userController = {
       if (user) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Password is incorrect." });
-        User.findByIdAndUpdate(user._id, { name: name, avatar: picture });
+        await User.findByIdAndUpdate(user._id, { name: name, avatar: picture });
         const refresh_token = createRefreshToken({ id: user._id, role: user.role });
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
@@ -308,7 +308,7 @@ const userController = {
       if (user) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Password is incorrect." });
-        User.findByIdAndUpdate(user._id, { name: name, avatar: picture.data.url });
+        await User.findByIdAndUpdate(user._id, { name: name, avatar: picture.data.url });
         const refresh_token = createRefreshToken({ id: user._id, role: user.role });
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
