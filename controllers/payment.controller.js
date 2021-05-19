@@ -3,6 +3,7 @@ import sha256 from "sha256";
 import dateFormat from "dateformat";
 
 import Bill from "../models/bill.model.js";
+import Product from "../models/product.model.js";
 
 const tmnCode = process.env.VNP_TMN_CODE;
 const secretKey = process.env.VNP_HASH_SECRET;
@@ -76,9 +77,21 @@ export const returnPayment = async (req, res) => {
     const checkSum = sha256(signData);
 
     const id = vnp_Params.vnp_TxnRef;
+
+    res.status(200).json({ code: vnp_Params.vnp_ResponseCode });
     if (secureHash === checkSum) {
       if (vnp_Params.vnp_ResponseCode == "00") {
-        await Bill.findByIdAndUpdate(id, { status: true });
+        const bill = await Bill.findByIdAndUpdate(id, { status: true }, { new: true });
+        const handleProduct = async () => {
+          bill.cart.forEach(async (item) => {
+            const product = await Product.findById(item.productID);
+            await Product.findByIdAndUpdate(item.productID, {
+              inventory: product.inventory - item.quantity,
+              sold: product.sold + item.quantity,
+            });
+          });
+        };
+        handleProduct();
         res.status(200).json({ code: vnp_Params.vnp_ResponseCode });
       } else {
         await Bill.findByIdAndDelete(id);
@@ -109,7 +122,14 @@ export const inpPayment = async (req, res) => {
     const id = vnp_Params.vnp_TxnRef;
     if (secureHash === checkSum) {
       if (vnp_Params.vnp_ResponseCode == "00") {
-        await Bill.findByIdAndUpdate(id, { status: true });
+        const bill = await Bill.findByIdAndUpdate(id, { status: true }, { new: true });
+        bill.cart.forEach(async (item) => {
+          const product = await Product.findById(item.productID);
+          await Product.findByIdAndUpdate(item.productID, {
+            inventory: product.inventory - item.quantity,
+            sold: product.sold + item.quantity,
+          });
+        });
         res.status(200).json({ RspCode: vnp_Params.vnp_ResponseCode, Message: "success" });
       } else {
         await Bill.findByIdAndDelete(id);

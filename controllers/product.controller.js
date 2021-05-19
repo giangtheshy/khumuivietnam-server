@@ -80,7 +80,7 @@ export const updateProduct = async (req, res) => {
     if (!product) res.status(404).json({ message: "Product not found" });
     if (role * 1 > 1 || (user === product.UID.toString() && role * 1 === 1)) {
       let images;
-      if (!data.images[0].includes("res.cloudinary.com")) {
+      if (!data.images.every((item) => item.includes("res.cloudinary.com"))) {
         let multipleUpload = new Promise(async (resolve, reject) => {
           let upload_len = data.images.length,
             upload_res = new Array();
