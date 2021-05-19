@@ -190,6 +190,18 @@ const userController = {
       res.status(500).json({ message: error.message });
     }
   },
+  getAllUsers: async (req, res) => {
+    try {
+      if (req.user.role <= 1) {
+        res.status(404).json({ message: "Access have been denied." });
+      }
+      const users = await User.find().select("-password");
+
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
   logout: async (req, res) => {
     try {
       res.clearCookie("refreshtoken", { path: "/api/user/refresh_token" });
@@ -258,7 +270,7 @@ const userController = {
       if (user) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Password is incorrect." });
-        await User.findByIdAndUpdate(user._id, { name: name, avatar: picture });
+        await User.findByIdAndUpdate(user._id, { name: name, avatar: picture, social: "google" });
         const refresh_token = createRefreshToken({ id: user._id, role: user.role });
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
@@ -269,7 +281,7 @@ const userController = {
         });
         res.status(200).json({ message: "Login success!" });
       } else {
-        const newUser = new User({ name, email, password: passwordHash, avatar: picture });
+        const newUser = new User({ name, email, password: passwordHash, avatar: picture, social: "google" });
 
         await newUser.save();
 
@@ -308,7 +320,7 @@ const userController = {
       if (user) {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Password is incorrect." });
-        await User.findByIdAndUpdate(user._id, { name: name, avatar: picture.data.url });
+        await User.findByIdAndUpdate(user._id, { name: name, avatar: picture.data.url, social: "facebook" });
         const refresh_token = createRefreshToken({ id: user._id, role: user.role });
         res.cookie("refreshtoken", refresh_token, {
           httpOnly: true,
@@ -319,7 +331,7 @@ const userController = {
         });
         res.status(200).json({ message: "Login success!" });
       } else {
-        const newUser = new User({ name, email, password: passwordHash, avatar: picture.data.url });
+        const newUser = new User({ name, email, password: passwordHash, avatar: picture.data.url, social: "facebook" });
         await newUser.save();
 
         const refresh_token = createRefreshToken({ id: newUser._id, role: newUser.role });

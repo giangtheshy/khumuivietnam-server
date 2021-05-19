@@ -94,7 +94,7 @@ export const returnPayment = async (req, res) => {
         handleProduct();
         res.status(200).json({ code: vnp_Params.vnp_ResponseCode });
       } else {
-        await Bill.findByIdAndDelete(id);
+        // await Bill.findByIdAndDelete(id);
         res.status(200).json({ code: vnp_Params.vnp_ResponseCode });
       }
     } else {
@@ -136,7 +136,7 @@ export const inpPayment = async (req, res) => {
         res.status(200).json({ RspCode: vnp_Params.vnp_ResponseCode, Message: "Fail checksum" });
       }
     } else {
-      await Bill.findByIdAndDelete(id);
+      // await Bill.findByIdAndDelete(id);
       res.status(200).json({ RspCode: vnp_Params.vnp_ResponseCode, Message: "Fail checksum" });
     }
   } catch (error) {

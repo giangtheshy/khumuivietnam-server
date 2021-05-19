@@ -1,14 +1,5 @@
 import express from "express";
-// import {
-//   registerUser,
-//   loginUser,
-//   isValidToken,
-//   deleteUser,
-//   getUser,
-//   loginGoogleUser,
-//   updateFavorites,
-//   getFavorites,
-// } from "../controllers/user.controller.js";
+
 import userController from "../controllers/user.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 
@@ -21,6 +12,7 @@ router.get("/refresh_token", userController.getAccessToken);
 router.post("/forgot", userController.forgotPassword);
 router.post("/reset", auth, userController.resetPassword);
 router.get("/info", auth, userController.getUserInfo);
+router.get("/get_all", auth, userController.getAllUsers);
 router.get("/logout", userController.logout);
 router.patch("/update", auth, userController.updateUser);
 router.patch("/update_avatar", auth, userController.updateUserAvatar);
@@ -30,12 +22,5 @@ router.post("/google_login", userController.googleLogin);
 router.post("/facebook_login", userController.facebookLogin);
 router.patch("/updateFavorites/:id", auth, userController.updateFavorites);
 router.get("/getFavorites", auth, userController.getFavorites);
-
-// route.post("/register", registerUser);
-// route.post("/login", loginUser);
-// route.post("/isValidToken", isValidToken);
-// route.delete("/:id", deleteUser);
-// route.post("/loginGoogle", loginGoogleUser);
-// route.get("/", auth, getUser);
 
 export default router;
