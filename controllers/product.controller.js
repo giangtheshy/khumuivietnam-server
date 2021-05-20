@@ -59,9 +59,9 @@ export const getProducts = async (req, res) => {
     const page = req.query.page * 1;
     let products;
     if (!page) {
-      products = await Product.find().sort({ sold: -1 });
+      products = await Product.find({ awaiting: "false" }).sort({ sold: -1 });
     } else {
-      products = await Product.find()
+      products = await Product.find({ awaiting: "false" })
         .sort({ sold: -1 })
         .limit(page * 10);
     }
@@ -70,6 +70,26 @@ export const getProducts = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const getProductsUnVerify = async (req, res) => {
+  try {
+    if (req.user.role * 1 <= 1) return res.status(400).json({ message: "Access have been denied" });
+    const products = await Product.find({ awaiting: "true" });
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+export const verifyProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (req.user.role * 1 <= 1) return res.status(400).json({ message: "Access have been denied" });
+    await Product.findByIdAndUpdate(id, { awaiting: "false" }, { new: true });
+    res.status(200).json({ message: "Updated has successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const updateProduct = async (req, res) => {
   try {
     const data = req.body;

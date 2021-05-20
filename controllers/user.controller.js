@@ -237,7 +237,9 @@ const userController = {
   updateUserRole: async (req, res) => {
     try {
       const { role } = req.body;
-      await User.findOneAndUpdate({ _id: req.user.id }, { role });
+      const id = req.params.id;
+      if (req.user.role * 1 <= 3) return res.status(400).json({ message: "Access have been denied" });
+      await User.findByIdAndUpdate(id, { role: role * 1 });
 
       res.status(200).json({ message: "Update success!" });
     } catch (error) {
@@ -246,6 +248,9 @@ const userController = {
   },
   deleteUser: async (req, res) => {
     try {
+      if (req.user.role * 1 <= 1) return res.status(400).json({ message: "Access have been denied" });
+      const user = await User.findById(req.params.id);
+      if (req.user.role <= user.role) return res.status(400).json({ message: "Access have been denied" });
       await User.findOneAndDelete({ _id: req.params.id });
 
       res.status(200).json({ message: "Deleted success!" });

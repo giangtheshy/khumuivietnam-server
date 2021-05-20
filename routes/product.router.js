@@ -1,13 +1,15 @@
 import express from "express";
-import { createProduct, getProducts, getProduct, searchProducts, updateProduct, removeProduct } from '../controllers/product.controller.js'
-import auth from '../middlewares/auth.middleware.js';
+import * as products from "../controllers/product.controller.js";
+import auth from "../middlewares/auth.middleware.js";
 
-const route = express.Router()
+const route = express.Router();
 
-route.post('/products/createProduct', auth, createProduct)
-route.get('/products/getProduct/:id', getProduct)
-route.patch('/products/updateProduct/:id', auth, updateProduct)
-route.delete('/products/removeProduct/:id', auth, removeProduct)
-route.get('/products/getProducts', getProducts)
-route.post('/products/search', searchProducts)
-export default route
+route.post("/products/createProduct", auth, products.createProduct);
+route.get("/products/getProduct/:id", products.getProduct);
+route.patch("/products/updateProduct/:id", auth, products.updateProduct);
+route.get("/products/get_unverify", auth, products.getProductsUnVerify);
+route.get("/products/verify/:id", auth, products.verifyProduct);
+route.delete("/products/removeProduct/:id", auth, products.removeProduct);
+route.get("/products/getProducts", products.getProducts);
+route.post("/products/search", products.searchProducts);
+export default route;

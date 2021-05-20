@@ -11,6 +11,7 @@ import userRouter from "./routes/user.router.js";
 import cartRouter from "./routes/cart.router.js";
 import paymentRouter from "./routes/payment.router.js";
 import billRouter from "./routes/bill.router.js";
+import requestRouter from "./routes/request.router.js";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use("/api/user", userRouter);
 app.use("/api", cartRouter);
 app.use("/api/payment", paymentRouter);
 app.use("/api/bill", billRouter);
+app.use("/api/request", requestRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to backend web!");
