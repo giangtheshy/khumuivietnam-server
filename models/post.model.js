@@ -6,6 +6,7 @@ const filmSchema = mongoose.Schema({
   description: String,
   introduce: String,
   image: String,
+  keywords: String,
   parseLink: String,
   contents: [{ title: String, content: [{ heading: String, text: String, image: String, link: String }] }],
   createdAt: { type: Number, default: new Date().getTime() },
