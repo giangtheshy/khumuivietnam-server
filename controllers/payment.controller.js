@@ -10,7 +10,7 @@ const secretKey = process.env.VNP_HASH_SECRET;
 let url = process.env.VNP_URL;
 const returnUrl =
   process.env.NODE_ENV === "production"
-    ? "https://khumuivietnam.com/tai-khoan/ket-qua-giao-dich"
+    ? "https://ananas.ml/tai-khoan/ket-qua-giao-dich"
     : process.env.VNP_RETURN_URL;
 
 export const createPayment = async (req, res) => {
